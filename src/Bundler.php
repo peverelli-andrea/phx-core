@@ -100,9 +100,9 @@ final class Bundler
 				}
 				CSS,
 			);
-
-			return $typos_css;
 		}
+
+		return $typos_css;
 	}
 
 	/** @return string[] */
