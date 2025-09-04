@@ -55,7 +55,7 @@ final class Bundler
 		$typos_css = self::getTyposCss(bundle: $bundle);
 		$classes_css = self::getClassesCss(bundle: $bundle);
 
-		$css = "";
+		$css = [];
 
 		array_push($css, $typos_css, $classes_css);
 		$css = implode("\n\n", $css);
