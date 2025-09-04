@@ -5,7 +5,7 @@ namespace Phx\Core;
 final class Bundler
 {
 	/** @param Render[] $component_renders */
-	public final static function make(array $component_renders): Bundle
+	final public static function make(array $component_renders): Bundle
 	{
 		$classes_bundle = [];
 		$typos_bundle = [];
@@ -42,7 +42,7 @@ final class Bundler
 		return $bundle;
 	}
 
-	public final static function getCss(Bundle $bundle): string
+	final public static function getCss(Bundle $bundle): string
 	{
 		$typos_css = self::getTyposCss(bundle: $bundle);
 		$classes_css = self::getClassesCss(bundle: $bundle);
@@ -56,7 +56,7 @@ final class Bundler
 	}
 
 	/** @return string[] */
-	private final static function getTyposCss(Bundle $bundle): array
+	private static function getTyposCss(Bundle $bundle): array
 	{
 	  	$typos_css = [];
 		foreach($bundle->typos as $typo) {
@@ -98,7 +98,7 @@ final class Bundler
 	}
 
 	/** @return string[] */
-	private final static function getClassesCss(Bundle $bundle): array
+	private static function getClassesCss(Bundle $bundle): array
 	{
 		$classes_css = [];
 
@@ -114,7 +114,7 @@ final class Bundler
 		return $classes_css;
 	}
 
-	public final static function getScriptsBefore(Bundle $bundle): string
+	final public static function getScriptsBefore(Bundle $bundle): string
 	{
 		$scripts_before_bundle = $bundle->scripts_before;
 
@@ -136,7 +136,7 @@ final class Bundler
 		return $html_scripts;
 	}
 
-	public final static function getScriptsAfter(Bundle $bundle): string
+	final public static function getScriptsAfter(Bundle $bundle): string
 	{
 		$scripts_after_bundle = $bundle->scripts_after;
 
@@ -158,7 +158,7 @@ final class Bundler
 		return $html_scripts;
 	}
 
-	public final static function getHtml(Render $render): string
+	final public static function getHtml(Render $render): string
 	{
 		return $render->html;
 	}

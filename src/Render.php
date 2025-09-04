@@ -4,7 +4,7 @@ namespace Phx\Core;
 
 final class Render
 {
-	public final function __construct(
+	final public function __construct(
 		/** @var string[] $classes */
 		public array $classes = [],
 
