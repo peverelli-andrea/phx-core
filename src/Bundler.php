@@ -9,12 +9,14 @@ final class Bundler
 	{
 		$classes_bundle = [];
 		$typos_bundle = [];
-		$scripts_bundle = [];
+		$scripts_before_bundle = [];
+		$scripts_after_bundle = [];
 
 		foreach($component_renders as $component_render) {
 			$classes = $component_render->classes;
 			$typos = $component_render->typos;
-			$scripts = $component_render->scripts;
+			$scripts_before = $component_render->scripts_before;
+			$scripts_after = $component_render->scripts_after;
 
 			foreach($classes as $class_name => $class_css) {
 				$classes_bundle[$class_name] = $class_css;
@@ -24,19 +26,25 @@ final class Bundler
 				$typos_bundle[$typo_name] = $typo;
 			}
 
-			foreach($scripts as $script_name => $script) {
-				$scripts_bundle[$script_name] = $script;
+			foreach($scripts_before as $script_name => $script) {
+				$scripts_before_bundle[$script_name] = $script;
+			}
+
+			foreach($scripts_after as $script_name => $script) {
+				$scripts_after_bundle[$script_name] = $script;
 			}
 		}
 
 		$classes_bundle = array_values($classes_bundle);
 		$typos_bundle = array_values($typos_bundle);
-		$sctipts_bundle = array_values($scripts_bundle);
+		$sctipts_before_bundle = array_values($scripts_before_bundle);
+		$sctipts_after_bundle = array_values($scripts_after_bundle);
 
 		$bundle = new Bundle(
 			classes: $classes_bundle,
 			typos: $typos_bundle,
-			scripts: $scripts_bundle,
+			scripts_before: $scripts_before_bundle,
+			scripts_after: $scripts_after_bundle,
 		);
 
 		return $bundle;
