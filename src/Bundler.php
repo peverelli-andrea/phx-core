@@ -58,9 +58,10 @@ final class Bundler
 		$css = [];
 
 		array_push($css, $typos_css, $classes_css);
-		$css = implode("\n\n", $css);
+		$css_string = "";
+		$css_string = implode("\n\n", $css);
 
-		return $css;
+		return $css_string;
 	}
 
 	/** @return string[] */
