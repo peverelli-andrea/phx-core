@@ -66,40 +66,11 @@ final class Bundler
 	/** @return string[] */
 	private static function getTyposCss(Bundle $bundle): array
 	{
+		$typos = $bundle->typos;
+
 	  	$typos_css = [];
-		foreach($bundle->typos as $typo) {
-			$font_family = $typo->font_family;
-			$src = [];
-			foreach($typo->src as $font_src) {
-				$font_src_url = $font_src->url;
-				$font_src_format = $font_src->format;
-
-				if($font_src_format === "local") {
-					array_push(
-						$src,
-						<<<CSS
-						local("{$font_src_url}")
-						CSS,
-					);
-				} else {
-					array_push(
-						$src,
-						<<<CSS
-						url("{$font_src_url}") format("{$font_src_format}")
-						CSS,
-					);
-				}
-			}
-
-			array_push(
-				$typos_css,
-				<<<CSS
-				@font-face {
-					font-family: {$typo->font_family};
-					src: {implode($typo->src};
-				}
-				CSS,
-			);
+		foreach($typos as $key => $css) {
+			$typos_css[$key] = $css;
 		}
 
 		return $typos_css;
@@ -108,15 +79,12 @@ final class Bundler
 	/** @return string[] */
 	private static function getClassesCss(Bundle $bundle): array
 	{
+		$classes = $bundle->classes;
+
 		$classes_css = [];
 
-		foreach($bundle->classes as $class) {
-			array_push(
-				$classes_css,
-				<<<CSS
-				{$class}
-				CSS,
-			);
+		foreach($classes as $key => $class) {
+			$classes_css[$key] = $class;
 		}
 
 		return $classes_css;
@@ -128,15 +96,14 @@ final class Bundler
 
 		$html_scripts = [];
 		
-		foreach($scripts_before_bundle as $script) {
-			array_push(
-				$html_scripts,
-				<<<HTML
-				<script>
-					{$script}
-				</script>
-				HTML,
-			);
+		foreach($scripts_before_bundle as $key => $script) {
+			$html_script = <<<HTML
+			<script>
+				{$script}
+			</script>
+			HTML;
+
+			$html_scripts[$key] = $html_script;
 		}
 
 		$html_scripts = implode("\n\n", $html_scripts);
@@ -150,15 +117,14 @@ final class Bundler
 
 		$html_scripts = [];
 		
-		foreach($scripts_after_bundle as $script) {
-			array_push(
-				$html_scripts,
-				<<<HTML
-				<script>
-					{$script}
-				</script>
-				HTML,
-			);
+		foreach($scripts_after_bundle as $key => $script) {
+			$html_script = <<<HTML
+			<script>
+				{$script}
+			</script>
+			HTML;
+
+			$html_scripts[$key] = $html_script;
 		}
 
 		$html_scripts = implode("\n\n", $html_scripts);
