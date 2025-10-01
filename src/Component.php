@@ -259,7 +259,10 @@ abstract class Component
 		return $typography;
 	}
 
-	final protected static function getPaletteCss(ForegroundColor|BackgroundColor $color): string
+	final protected static function getPaletteCss(
+		ForegroundColor|BackgroundColor $color,
+		?PseudoSelector $pseudo = null,
+	): string
 	{
 		$color_name = $color->value;
 
@@ -272,37 +275,43 @@ abstract class Component
 		$dark_medium = $palette_set->dark_medium;
 		$dark_high = $palette_set->dark_high;
 
+		$pseudo_selector = "";
+		if($pseudo !== null) {
+			$pseudo_name = $pseudo->value;
+			$pseudo_selector = ":$pseudo_name";
+		}
+
 		if($color instanceof ForegroundColor) {
 			$css = <<<CSS
-			.$color_name {
+			.$color_name$pseudo_selector {
 				color: $light_normal;
 			}
 
 			@media (prefers-contrast: less) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					color: $light_medium;
 				}
 			}
 
 			@media (prefers-contrast: more) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					color: $light_high;
 				}
 			}
 
 			@media (prefers-color-scheme: dark) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					color: $dark_normal;
 				}
 
 				@media (prefers-contrast: less) {
-					.$color_name {
+					.$color_name$pseudo_selector {
 						color: $dark_medium;
 					}
 				}
 
 				@media (prefers-contrast: more) {
-					.$color_name {
+					.$color_name$pseudo_selector {
 						color: $dark_high;
 					}
 				}
@@ -310,35 +319,35 @@ abstract class Component
 			CSS;
 		} else {
 			$css = <<<CSS
-			.$color_name {
+			.$color_name$pseudo_selector {
 				background-color: $light_normal;
 			}
 
 			@media (prefers-contrast: less) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					background-color: $light_medium;
 				}
 			}
 
 			@media (prefers-contrast: more) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					background-color: $light_high;
 				}
 			}
 
 			@media (prefers-color-scheme: dark) {
-				.$color_name {
+				.$color_name$pseudo_selector {
 					background-color: $dark_normal;
 				}
 
 				@media (prefers-contrast: less) {
-					.$color_name {
+					.$color_name$pseudo_selector {
 						background-color: $dark_medium;
 					}
 				}
 
 				@media (prefers-contrast: more) {
-					.$color_name {
+					.$color_name$pseudo_selector {
 						background-color: $dark_high;
 					}
 				}
