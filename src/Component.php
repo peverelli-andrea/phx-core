@@ -262,6 +262,7 @@ abstract class Component
 	final protected static function getPaletteCss(
 		ForegroundColor|BackgroundColor $color,
 		?PseudoSelector $pseudo = null,
+		?string $additional_classes = null
 	): string
 	{
 		$color_name = $color->value;
@@ -281,37 +282,42 @@ abstract class Component
 			$pseudo_selector = ":$pseudo_name";
 		}
 
+		$suffix_classes = "";
+		if($additional_classes !== null) {
+			$suffix_classes = " $additional_classes";
+		}
+
 		if($color instanceof ForegroundColor) {
 			$css = <<<CSS
-			.$color_name$pseudo_selector {
+			.$color_name$pseudo_selector$suffix_classes {
 				color: $light_normal;
 			}
 
 			@media (prefers-contrast: less) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					color: $light_medium;
 				}
 			}
 
 			@media (prefers-contrast: more) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					color: $light_high;
 				}
 			}
 
 			@media (prefers-color-scheme: dark) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					color: $dark_normal;
 				}
 
 				@media (prefers-contrast: less) {
-					.$color_name$pseudo_selector {
+					.$color_name$pseudo_selector$suffix_classes {
 						color: $dark_medium;
 					}
 				}
 
 				@media (prefers-contrast: more) {
-					.$color_name$pseudo_selector {
+					.$color_name$pseudo_selector$suffix_classes {
 						color: $dark_high;
 					}
 				}
@@ -319,35 +325,35 @@ abstract class Component
 			CSS;
 		} else {
 			$css = <<<CSS
-			.$color_name$pseudo_selector {
+			.$color_name$pseudo_selector$suffix_classes {
 				background-color: $light_normal;
 			}
 
 			@media (prefers-contrast: less) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					background-color: $light_medium;
 				}
 			}
 
 			@media (prefers-contrast: more) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					background-color: $light_high;
 				}
 			}
 
 			@media (prefers-color-scheme: dark) {
-				.$color_name$pseudo_selector {
+				.$color_name$pseudo_selector$suffix_classes {
 					background-color: $dark_normal;
 				}
 
 				@media (prefers-contrast: less) {
-					.$color_name$pseudo_selector {
+					.$color_name$pseudo_selector$suffix_classes {
 						background-color: $dark_medium;
 					}
 				}
 
 				@media (prefers-contrast: more) {
-					.$color_name$pseudo_selector {
+					.$color_name$pseudo_selector$suffix_classes {
 						background-color: $dark_high;
 					}
 				}
