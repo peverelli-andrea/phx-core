@@ -11,6 +11,9 @@ final class Render
 		/** @var string[] $typos */
 		public array $typos = [],
 
+		/** @var ForegroundColor[]|BackgroundColor[] $colors*/
+		public array $colors = [],
+
 		/** @var string[] $scripts_before */
 		public array $scripts_before = [],
 

@@ -259,6 +259,21 @@ abstract class Component
 		return $typography;
 	}
 
+	final protected static function getColorName(ForegroundColor|BackgroundColor|string $color): string
+	{
+		if(gettype($color) === "string") {
+			if(substr($color, 0, 1) === "#") {
+				$color_name = substr($color, 1);
+			} else {
+				$color_name = $color;
+			}
+		} else {
+			$color_name = $color->value;
+		}
+
+		return $color_name;
+	}
+
 	final protected static function getPaletteCss(
 		ForegroundColor|BackgroundColor $color,
 		?PseudoSelector $pseudo = null,
@@ -402,6 +417,30 @@ abstract class Component
 		);
 
 		return $palette_set;
+	}
+
+	// When a unique ID is needed at a certain point; if already setted get it, if not set it and get it
+	final protected static function getId(CommonProps &$props): string
+	{
+		if($props->id === null) {
+			$props->id = uniqid();
+		}
+
+		return $props->id;
+	}
+
+	final protected static function addClass(
+		CommonProps &$props,
+		string $class,
+	): void
+	{
+		if($props->class === null) {
+			$props->class = $class;
+		} else {
+			$props->class .= " $class";
+		}
+
+		return;
 	}
 
 	final protected static function makeAttributes(
