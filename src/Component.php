@@ -259,19 +259,10 @@ abstract class Component
 		return $typography;
 	}
 
-	final protected static function getColorValue(
-		Palette|ForegroundColor|BackgroundColor|string $color,
-		?ColorType $type = null,
-	): string
+	final protected static function getColorValue(ForegroundColor|BackgroundColor|string $color): string
 	{
 		if(gettype($color) === "string") {
 			$color_value = $color;
-		} else if($color instanceof Palette) {
-			if($type === ColorType::FOREGROUND) {
-				$color_value = "var(--color-{$color->getForeground()->getCssName()}";
-			} else {
-				$color_value = "var(--color-{$color->getBackground()->getCssName()}";
-			}
 		} else {
 			$color_value = "var(--color-{$color->getCssName()})";
 		}
@@ -279,149 +270,19 @@ abstract class Component
 		return $color_value;
 	}
 
-	final protected static function getPaletteCss(
-		ForegroundColor|BackgroundColor $color,
-		?PseudoSelector $pseudo = null,
-		?string $additional_classes = null
-	): string
+	final protected static function getColorName(ForegroundColor|BackgorundColor|string $color): string
 	{
-		$color_name = $color->value;
-
-		$palette_set = self::getPaletteSet(color: $color);
-
-		$light_normal = $palette_set->light_normal;
-		$light_medium = $palette_set->light_medium;
-		$light_high = $palette_set->light_high;
-		$dark_normal = $palette_set->dark_normal;
-		$dark_medium = $palette_set->dark_medium;
-		$dark_high = $palette_set->dark_high;
-
-		$pseudo_selector = "";
-		if($pseudo !== null) {
-			$pseudo_name = $pseudo->value;
-			$pseudo_selector = ":$pseudo_name";
-		}
-
-		$suffix_classes = "";
-		if($additional_classes !== null) {
-			$suffix_classes = " $additional_classes";
-		}
-
-		if($color instanceof ForegroundColor) {
-			$css = <<<CSS
-			.$color_name$pseudo_selector$suffix_classes {
-				color: $light_normal;
+		if(gettype($color) === "string") {
+			if(substr($color, 0, 1) === "#") {
+				$color_name = substr($color, 1);
+			} else {
+				$color_name = $color;
 			}
-
-			@media (prefers-contrast: less) {
-				.$color_name$pseudo_selector$suffix_classes {
-					color: $light_medium;
-				}
-			}
-
-			@media (prefers-contrast: more) {
-				.$color_name$pseudo_selector$suffix_classes {
-					color: $light_high;
-				}
-			}
-
-			@media (prefers-color-scheme: dark) {
-				.$color_name$pseudo_selector$suffix_classes {
-					color: $dark_normal;
-				}
-
-				@media (prefers-contrast: less) {
-					.$color_name$pseudo_selector$suffix_classes {
-						color: $dark_medium;
-					}
-				}
-
-				@media (prefers-contrast: more) {
-					.$color_name$pseudo_selector$suffix_classes {
-						color: $dark_high;
-					}
-				}
-			}
-			CSS;
 		} else {
-			$css = <<<CSS
-			.$color_name$pseudo_selector$suffix_classes {
-				background-color: $light_normal;
-			}
-
-			@media (prefers-contrast: less) {
-				.$color_name$pseudo_selector$suffix_classes {
-					background-color: $light_medium;
-				}
-			}
-
-			@media (prefers-contrast: more) {
-				.$color_name$pseudo_selector$suffix_classes {
-					background-color: $light_high;
-				}
-			}
-
-			@media (prefers-color-scheme: dark) {
-				.$color_name$pseudo_selector$suffix_classes {
-					background-color: $dark_normal;
-				}
-
-				@media (prefers-contrast: less) {
-					.$color_name$pseudo_selector$suffix_classes {
-						background-color: $dark_medium;
-					}
-				}
-
-				@media (prefers-contrast: more) {
-					.$color_name$pseudo_selector$suffix_classes {
-						background-color: $dark_high;
-					}
-				}
-			}
-			CSS;
+			$color_name = $color->value;
 		}
 
-		return $css;
-	}
-
-	private static function getPaletteSet(ForegroundColor|BackgroundColor $color): PaletteSet
-	{
-		$color_name = $color->value;
-
-		$settings_path = realpath($_SERVER["DOCUMENT_ROOT"] . "/../settings/palette/");
-
-		$light_normal_path = realpath($settings_path . "/light-normal.json");
-		$light_medium_path = realpath($settings_path . "/light-medium.json");
-		$light_high_path = realpath($settings_path . "/light-high.json");
-		$dark_normal_path = realpath($settings_path . "/dark-normal.json");
-		$dark_medium_path = realpath($settings_path . "/dark-medium.json");
-		$dark_high_path = realpath($settings_path . "/dark-high.json");
-
-
-		$light_normal_settings = json_decode(file_get_contents($light_normal_path));
-		$light_medium_settings = json_decode(file_get_contents($light_medium_path));
-		$light_high_settings = json_decode(file_get_contents($light_high_path));
-		$dark_normal_settings = json_decode(file_get_contents($dark_normal_path));
-		$dark_medium_settings = json_decode(file_get_contents($dark_medium_path));
-		$dark_high_settings = json_decode(file_get_contents($dark_high_path));
-
-		$light_normal = $light_normal_settings->$color_name;
-		$light_medium = $light_medium_settings->$color_name;
-		$light_high = $light_high_settings->$color_name;
-		$dark_normal = $dark_normal_settings->$color_name;
-		$dark_medium = $dark_medium_settings->$color_name;
-		$dark_high = $dark_high_settings->$color_name;
-
-		$palette_set = new PaletteSet(
-			light_normal: $light_normal,
-			light_medium: $light_medium,
-			light_high: $light_high,
-			dark_normal: $dark_normal,
-			dark_medium: $dark_medium,
-			dark_high: $dark_high,
-		);
-
-		return $palette_set;
+		return $color_name;
 	}
 
 	// When a unique ID is needed at a certain point; if already setted get it, if not set it and get it
