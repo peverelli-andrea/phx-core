@@ -259,19 +259,24 @@ abstract class Component
 		return $typography;
 	}
 
-	final protected static function getColorName(ForegroundColor|BackgroundColor|string $color): string
+	final protected static function getColorValue(
+		Palette|ForegroundColor|BackgroundColor|string $color,
+		?ColorType $type = null,
+	): string
 	{
 		if(gettype($color) === "string") {
-			if(substr($color, 0, 1) === "#") {
-				$color_name = substr($color, 1);
+			$color_value = $color;
+		} else if($color instanceof Palette) {
+			if($type === ColorType::FOREGROUND) {
+				$color_value = "var(--color-{$color->getForeground()->getCssName()}";
 			} else {
-				$color_name = $color;
+				$color_value = "var(--color-{$color->getBackground()->getCssName()}";
 			}
 		} else {
-			$color_name = $color->value;
+			$color_value = "var(--color-{$color->getCssName()})";
 		}
 
-		return $color_name;
+		return $color_value;
 	}
 
 	final protected static function getPaletteCss(

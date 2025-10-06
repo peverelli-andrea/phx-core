@@ -8,4 +8,9 @@ enum BackgroundColor: string
 	case PRIMARY = "primary";
 	case SECONDARY = "secondary";
 	case TERTIARY = "tertiary";
+
+	final public function getCssName(): string
+	{
+		return str_replace("_", "-", $this->value);
+	}
 }
