@@ -95,9 +95,9 @@ final class Bundler
 		$colors = $bundle->colors;
 
 		$palette_colors = [];
-		foreach($colors as $color) {
+		foreach($colors as $color_name => $color) {
 			if(gettype($color) !== "string") {
-				$palette_colors[$color->value] = $color;
+				$palette_colors[$color_name] = $color;
 			}
 		}
 

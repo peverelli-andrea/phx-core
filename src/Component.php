@@ -270,7 +270,7 @@ abstract class Component
 		return $color_value;
 	}
 
-	final protected static function getColorName(ForegroundColor|BackgorundColor|string $color): string
+	final protected static function getColorName(ForegroundColor|BackgroundColor|string $color): string
 	{
 		if(gettype($color) === "string") {
 			if(substr($color, 0, 1) === "#") {
