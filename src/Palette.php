@@ -8,6 +8,7 @@ enum Palette: string
 	case PRIMARY = "primary";
 	case SECONDARY = "secondary";
 	case TERTIARY = "tertiary";
+	case SURFACE_CONTAINER_LOW = "surface_container_low";
 
 	final public function getForeground(): ForegroundColor
 	{
@@ -16,6 +17,7 @@ enum Palette: string
 			self::PRIMARY => ForegroundColor::ON_PRIMARY,
 			self::SECONDARY => ForegroundColor::ON_SECONDARY,
 			self::TERTIARY => ForegroundColor::ON_TERTIARY,
+			self::SURFACE_CONTAINER_LOW => ForegroundColor::ON_SURFACE,
 		};
 	}
 
@@ -26,6 +28,7 @@ enum Palette: string
 			self::PRIMARY => BackgroundColor::PRIMARY,
 			self::SECONDARY => BackgroundColor::SECONDARY,
 			self::TERTIARY => BackgroundColor::TERTIARY,
+			self::SURFACE_CONAINER_LOW => BackgroundColor::SURFACE_CONTAINER_LOW,
 		};
 	}
 }

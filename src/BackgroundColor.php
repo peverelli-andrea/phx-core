@@ -8,6 +8,7 @@ enum BackgroundColor: string
 	case PRIMARY = "primary";
 	case SECONDARY = "secondary";
 	case TERTIARY = "tertiary";
+	case SURFACE_CONTAINER_LOW = "surface_container_low";
 
 	final public function getCssName(): string
 	{
