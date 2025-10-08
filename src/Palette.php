@@ -28,7 +28,7 @@ enum Palette: string
 			self::PRIMARY => BackgroundColor::PRIMARY,
 			self::SECONDARY => BackgroundColor::SECONDARY,
 			self::TERTIARY => BackgroundColor::TERTIARY,
-			self::SURFACE_CONAINER_LOW => BackgroundColor::SURFACE_CONTAINER_LOW,
+			self::SURFACE_CONTAINER_LOW => BackgroundColor::SURFACE_CONTAINER_LOW,
 		};
 	}
 }
