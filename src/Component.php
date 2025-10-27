@@ -288,7 +288,7 @@ abstract class Component
 	final protected static function getColorStatesCss(
 		ColorStates $color_states,
 		CssColorProperty $css_color_property,
-		string $media_query,
+		string $class_name,
 	): ColorStatesCss
 	{
 		$css_color_property_name = $css_color_property->value;
@@ -308,7 +308,7 @@ abstract class Component
 			$default_value = self::getColorValue(color: $default_value);
 
 			$css_default = <<<CSS
-			$media_query {
+			.$class_name{
 				${$css_color_property_name}: $default_value;
 			}
 			CSS;
@@ -319,7 +319,7 @@ abstract class Component
 			$disabled_value = self::getColorValue(color: $disabled_value);
 
 			$css_disabled = <<<CSS
-			${$media_query}:disabled {
+			.${$class_name}:disabled {
 				${$css_color_property_name}: $disabled_value;
 			}
 			CSS;
@@ -330,7 +330,7 @@ abstract class Component
 			$hover_value = self::getColorValue(color: $hover_value);
 
 			$css_hover = <<<CSS
-			${$media_query}:hover {
+			.${$class_name}:hover {
 				${$css_color_property_name}: $hover_value;
 			}
 			CSS;
@@ -341,7 +341,7 @@ abstract class Component
 			$focus_value = self::getColorValue(color: $focus_value);
 
 			$css_focus = <<<CSS
-			${$media_query}:focus-within {
+			.${$class_name}:focus-within {
 				${$css_color_property_name}: $focus_value;
 			}
 			CSS;
@@ -352,7 +352,7 @@ abstract class Component
 			$pressed_value = self::getColorValue(color: $pressed_value);
 
 			$css_pressed = <<<CSS
-			${$media_query}.pressed {
+			.${$class_name}.pressed {
 				${$css_color_property_name}: $pressed_value;
 			}
 			CSS;
@@ -363,7 +363,7 @@ abstract class Component
 			$toggled_default_value = self::getColorValue(color: $toggled_default_value);
 
 			$css_toggled_default = <<<CSS
-			${$media_query}.toggled {
+			.${$class_name}.toggled {
 				${$css_color_property_name}: $toggled_default_value;
 			}
 			CSS;
@@ -374,7 +374,7 @@ abstract class Component
 			$toggled_hover_value = self::getColorValue(color: $toggled_hover_value);
 
 			$css_toggled_hover = <<<CSS
-			${$media_query}.toggled:hover {
+			.${$class_name}.toggled:hover {
 				${$css_color_property_name}: $toggled_hover_value;
 			}
 			CSS;
@@ -385,7 +385,7 @@ abstract class Component
 			$toggled_focus_value = self::getColorValue(color: $toggled_focus_value);
 
 			$css_toggled_focus = <<<CSS
-			${$media_query}.toggled:focus-within {
+			.${$class_name}.toggled:focus-within {
 				${$css_color_property_name}: $toggled_focus_value;
 			}
 			CSS;
@@ -396,7 +396,7 @@ abstract class Component
 			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed_value);
 
 			$css_toggled_pressed = <<<CSS
-			${$media_query}.toggled.pressed {
+			.${$class_name}.toggled.pressed {
 				${$css_color_property_name}: $toggled_pressed_value;
 			}
 			CSS;
