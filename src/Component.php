@@ -285,6 +285,138 @@ abstract class Component
 		return $color_name;
 	}
 
+	final protected static function getColorStatesCss(
+		ColorStates $color_states,
+		CssColorProperty $css_color_property,
+		string $media_query,
+	): ColorStatesCss
+	{
+		$css_color_property_name = $css_color_property->value;
+
+		$default = $color_states->default;
+		$disabled = $color_states->disabled;
+		$hover = $color_states->hover;
+		$focus = $color_states->focus;
+		$pressed = $color_states->pressed;
+		$toggled_default = $color_states->toggled_default;
+		$toggled_hover = $color_states->toggled_hover;
+		$toggled_focus = $color_states->toggled_focus;
+		$toggled_pressed = $color_states->toggled_pressed;
+
+		$css_default = null;
+		if($default !== null) {
+			$default_value = self::getColorValue(color: $default_value);
+
+			$css_default = <<<CSS
+			$media_query {
+				${$css_color_property_name}: $default_value;
+			}
+			CSS;
+		}
+
+		$css_disabled = null;
+		if($disabled !== null) {
+			$disabled_value = self::getColorValue(color: $disabled_value);
+
+			$css_disabled = <<<CSS
+			${$media_query}:disabled {
+				${$css_color_property_name}: $disabled_value;
+			}
+			CSS;
+		}
+
+		$css_hover = null;
+		if($hover !== null) {
+			$hover_value = self::getColorValue(color: $hover_value);
+
+			$css_hover = <<<CSS
+			${$media_query}:hover {
+				${$css_color_property_name}: $hover_value;
+			}
+			CSS;
+		}
+
+		$css_focus = null;
+		if($focus !== null) {
+			$focus_value = self::getColorValue(color: $focus_value);
+
+			$css_focus = <<<CSS
+			${$media_query}:focus-within {
+				${$css_color_property_name}: $focus_value;
+			}
+			CSS;
+		}
+
+		$css_pressed = null;
+		if($pressed !== null) {
+			$pressed_value = self::getColorValue(color: $pressed_value);
+
+			$css_pressed = <<<CSS
+			${$media_query}.pressed {
+				${$css_color_property_name}: $pressed_value;
+			}
+			CSS;
+		}
+
+		$css_toggled_default = null;
+		if($toggled_default !== null) {
+			$toggled_default_value = self::getColorValue(color: $toggled_default_value);
+
+			$css_toggled_default = <<<CSS
+			${$media_query}.toggled {
+				${$css_color_property_name}: $toggled_default_value;
+			}
+			CSS;
+		}
+
+		$css_toggled_hover = null;
+		if($toggled_hover !== null) {
+			$toggled_hover_value = self::getColorValue(color: $toggled_hover_value);
+
+			$css_toggled_hover = <<<CSS
+			${$media_query}.toggled:hover {
+				${$css_color_property_name}: $toggled_hover_value;
+			}
+			CSS;
+		}
+
+		$css_toggled_focus = null;
+		if($toggled_focus !== null) {
+			$toggled_focus_value = self::getColorValue(color: $toggled_focus_value);
+
+			$css_toggled_focus = <<<CSS
+			${$media_query}.toggled:focus-within {
+				${$css_color_property_name}: $toggled_focus_value;
+			}
+			CSS;
+		}
+
+		$css_toggled_pressed = null;
+		if($toggled_pressed !== null) {
+			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed_value);
+
+			$css_toggled_pressed = <<<CSS
+			${$media_query}.toggled.pressed {
+				${$css_color_property_name}: $toggled_pressed_value;
+			}
+			CSS;
+		}
+
+		$color_states_css = new ColorStatesCss(
+			default: $css_default,
+			disabled: $css_disabled,
+			hover: $css_hover,
+			focus: $css_focus,
+			pressed: $css_pressed,
+			toggled_default: $css_toggled_default,
+			toggled_hover: $css_toggled_hover,
+			toggled_focus: $css_toggled_focus,
+			toggled_pressed: $css_toggled_pressed,
+		);
+
+		return $color_states_css;
+	}
+
 	// When a unique ID is needed at a certain point; if already setted get it, if not set it and get it
 	final protected static function getId(CommonProps &$props): string
 	{
