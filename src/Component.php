@@ -543,7 +543,7 @@ abstract class Component
 		);
 	}
 
-	final protected function getCommonprops(string|null $props_id): CommonProps
+	final protected function getCommonProps(string|null $props_id): CommonProps
 	{
 		if(!$props_id) {
 			return $this->common_props[0];
