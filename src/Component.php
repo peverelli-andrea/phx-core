@@ -524,7 +524,7 @@ abstract class Component
 	/** @var string[] $scripts_before */
 	private array $scripts_before = [];
 
-	final protected function addScriptsBefore(
+	final protected function addScriptBefore(
 		string $script_name,
 		string $script,
 	): string
@@ -541,5 +541,14 @@ abstract class Component
 			classes: $this->classes,
 			scripts_before: $this->scripts_before,
 		);
+	}
+
+	final protected function getCommonprops(string|null $props_id): CommonProps
+	{
+		if(!$props_id) {
+			return $this->common_props[0];
+		} else {
+			return $this->common_props[$props_id];
+		}
 	}
 }
