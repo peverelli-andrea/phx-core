@@ -418,27 +418,35 @@ abstract class Component
 	}
 
 	// When a unique ID is needed at a certain point; if already setted get it, if not set it and get it
-	final protected static function getId(CommonProps &$props): string
+	final protected function getId(string|null $props_id = null): string
 	{
-		if($props->id === null) {
-			$props->id = uniqid();
+		if(!$props_id) {
+			$props_id = 0;
 		}
 
-		return $props->id;
+		if(!$this->common_props[$props_id]->id) {
+			$this->common_props[$props_id]->id = uniqid();
+		}
+
+		return $this->common_props[$props_id]->id;
 	}
 
-	final protected static function addClass(
-		CommonProps &$props,
-		string $class,
-	): void
+	final protected function addClass(
+		string $class_name,
+		string|null $props_id = null,
+	): string
 	{
-		if($props->class === null) {
-			$props->class = $class;
-		} else {
-			$props->class .= " $class";
+		if(!$props_id) {
+			$props_id = 0;
 		}
 
-		return;
+		if($this->common_props[$props_id]->class === null) {
+			$this->common_props[$props_id]->class = $class_name;
+		} else {
+			$this->common_props[$props_id]->class .= " $class_name";
+		}
+
+		return $class_name;
 	}
 
 	final protected static function makeAttributes(
@@ -472,5 +480,66 @@ abstract class Component
 		}
 
 		return $attributes;
+	}
+
+	/** @var CommonProps|CommonProps[] $common_props */
+	private CommonProps|array $common_props = [];
+
+	/** @param CommonProps|CommonProps[] $common_props */
+	final protected function registerCommonProps(CommonProps|array $common_props): void
+	{
+		$this->$common_props = $common_props;
+
+		return;
+	}
+
+	final protected static function getHtml(Render $render): string
+	{
+		return Bundler::getHtml($render);
+	}
+
+	/** @var string[] $classes */
+	private array $classes = [];
+
+	final protected function addCss(
+		string $class_name,
+		string|null $props_id = null,
+		string|callable $css,
+	): string
+	{
+		self::addClass(
+			class_name: $class_name,
+			props_id: $props_id,
+		);
+
+		if(gettype($css) === "callable") {
+			$css = $css($class_name);
+		}
+
+		$this->classes[$class_name] = $css;
+
+		return $class_name;
+	}
+
+	/** @var string[] $scripts_before */
+	private array $scripts_before = [];
+
+	final protected function addScriptsBefore(
+		string $script_name,
+		string $script,
+	): string
+	{
+		$this->scripts_before[$script_name] = $script;
+
+		return $script_name;
+	}
+
+	final protected function makeRender(string $html = ""): Render
+	{
+		return new Render(
+			html: $html,
+			classes: $this->classes,
+			scripts_before: $this->scripts_before,
+		);
 	}
 }
