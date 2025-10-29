@@ -449,6 +449,22 @@ abstract class Component
 		return $class_name;
 	}
 
+	/** @param string[] $class_names */
+	final protected function addClasses(
+		array $class_names,
+		string|null $props_id = null,
+	): void
+	{
+		foreach($class_names as $class_name) {
+			$this->addClass(
+				class_name: $class_name,
+				props_id: $props_id,
+			);
+		}
+
+		return;
+	}
+
 	final protected static function makeAttributes(): string
 	{
 		$id = $this->common_props[0]->id ?? uniqid();
