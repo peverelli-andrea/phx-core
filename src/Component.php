@@ -465,7 +465,7 @@ abstract class Component
 		return;
 	}
 
-	final protected static function makeAttributes(): string
+	final protected function makeAttributes(): string
 	{
 		$id = $this->common_props[0]->id ?? uniqid();
 		$class = $this->common_props[0]->class ?? null;
@@ -489,7 +489,11 @@ abstract class Component
 	/** @param CommonProps|CommonProps[] $common_props */
 	final protected function registerCommonProps(CommonProps|array $common_props): void
 	{
-		$this->common_props = $common_props;
+		if(gettype($common_props) === "array") {
+			$this->common_props = $common_props;
+		} else {
+			$this->common_props[0] = $common_props;
+		}
 
 		return;
 	}
@@ -514,7 +518,7 @@ abstract class Component
 			props_id: $props_id,
 		);
 
-		if(gettype($css) === "callable") {
+		if(gettype($css) === "object") {
 			$css = $css($class_name);
 		}
 
@@ -565,11 +569,11 @@ abstract class Component
 		ColorType|null $color_type = null,
 	): void
 	{
-		if(gettype($color) !== "string" && $color_type) {
+		if($color instanceof Palette && $color_type) {
 			if($color_type === ColorType::FOREGROUND) {
-				$color = $color->getForegroundColor();
+				$color = $color->getForeground();
 			} else {
-				$color = $color->getBackgroundColor();
+				$color = $color->getBackground();
 			}
 		}
 
@@ -609,8 +613,8 @@ abstract class Component
 			sub_role: $sub_role,
 		);
 
-		array_push($classes, ...$typography_css->classes);
-		array_push($typos, ...$typography_css->fonts);
+		$this->classes = array_merge($this->classes, $typography_css->classes);
+		$this->typos = array_merge($this->typos, $typography_css->fonts);
 
 		$this->addClasses(class_names: array_keys($typography_css->classes));
 

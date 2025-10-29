@@ -14,7 +14,7 @@ abstract class Page
 	{
 		$this->components[$id] = $render;
 
-		return $id;
+		return $render->html;
 	}
 
 	/** @param string|callable|null $head */
@@ -31,11 +31,12 @@ abstract class Page
 				{Bundler::getCss(bundle: $bundle)}
 			</style>
 			HTML;
-		} else if(gettype($head) === "callable") {
-			$head = <<<HTML
-			{$head(css: Bundler::getCss(bundle: $bundle))}
-			HTML;
+		} else if(gettype($head) === "object") {
+			$head = $head(css: Bundler::getCss(bundle: $bundle));
 		}
+
+		$scripts_before = Bundler::getScriptsBefore(bundle: $bundle);
+		$scripts_after = Bundler::getScriptsAfter(bundle: $bundle);
 
 		return <<<HTML
 		<!DOCTYPE html>
@@ -44,16 +45,11 @@ abstract class Page
 				$head
 			</head>
 			<body>
-				{Bundler::getScriptsBefore(bundle: $bundle)}
+				$scripts_before
 				$body
-				{Bundler::getScriptsAfter(bundle: $bundle)}
+				$scripts_after
 			</body>
 		</html>
 		HTML;
-	}
-
-	final protected function getHtml(string $id): string
-	{
-		return $this->component[$id]->html;
 	}
 }
