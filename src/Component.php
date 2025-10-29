@@ -4,7 +4,7 @@ namespace Phx\Core;
 
 abstract class Component
 {
-	final public static function getTypographyCss(
+	final protected static function getTypographyCss(
 		TypographyRole $role = TypographyRole::LABEL,
 		TypographySubRole $sub_role = TypographySubRole::LARGE,
 	): TypographyCss
@@ -309,7 +309,7 @@ abstract class Component
 
 			$css_default = <<<CSS
 			.$class_name{
-				${$css_color_property_name}: $default_value;
+				{$css_color_property_name}: $default_value;
 			}
 			CSS;
 		}
@@ -319,8 +319,8 @@ abstract class Component
 			$disabled_value = self::getColorValue(color: $disabled_value);
 
 			$css_disabled = <<<CSS
-			.${$class_name}:disabled {
-				${$css_color_property_name}: $disabled_value;
+			.{$class_name}:disabled {
+				{$css_color_property_name}: $disabled_value;
 			}
 			CSS;
 		}
@@ -330,8 +330,8 @@ abstract class Component
 			$hover_value = self::getColorValue(color: $hover_value);
 
 			$css_hover = <<<CSS
-			.${$class_name}:hover {
-				${$css_color_property_name}: $hover_value;
+			.{$class_name}:hover {
+				{$css_color_property_name}: $hover_value;
 			}
 			CSS;
 		}
@@ -341,8 +341,8 @@ abstract class Component
 			$focus_value = self::getColorValue(color: $focus_value);
 
 			$css_focus = <<<CSS
-			.${$class_name}:focus-within {
-				${$css_color_property_name}: $focus_value;
+			.{$class_name}:focus-within {
+				{$css_color_property_name}: $focus_value;
 			}
 			CSS;
 		}
@@ -352,8 +352,8 @@ abstract class Component
 			$pressed_value = self::getColorValue(color: $pressed_value);
 
 			$css_pressed = <<<CSS
-			.${$class_name}.pressed {
-				${$css_color_property_name}: $pressed_value;
+			.{$class_name}.pressed {
+				{$css_color_property_name}: $pressed_value;
 			}
 			CSS;
 		}
@@ -363,8 +363,8 @@ abstract class Component
 			$toggled_default_value = self::getColorValue(color: $toggled_default_value);
 
 			$css_toggled_default = <<<CSS
-			.${$class_name}.toggled {
-				${$css_color_property_name}: $toggled_default_value;
+			.{$class_name}.toggled {
+				{$css_color_property_name}: $toggled_default_value;
 			}
 			CSS;
 		}
@@ -374,8 +374,8 @@ abstract class Component
 			$toggled_hover_value = self::getColorValue(color: $toggled_hover_value);
 
 			$css_toggled_hover = <<<CSS
-			.${$class_name}.toggled:hover {
-				${$css_color_property_name}: $toggled_hover_value;
+			.{$class_name}.toggled:hover {
+				{$css_color_property_name}: $toggled_hover_value;
 			}
 			CSS;
 		}
@@ -385,8 +385,8 @@ abstract class Component
 			$toggled_focus_value = self::getColorValue(color: $toggled_focus_value);
 
 			$css_toggled_focus = <<<CSS
-			.${$class_name}.toggled:focus-within {
-				${$css_color_property_name}: $toggled_focus_value;
+			.{$class_name}.toggled:focus-within {
+				{$css_color_property_name}: $toggled_focus_value;
 			}
 			CSS;
 		}
@@ -396,8 +396,8 @@ abstract class Component
 			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed_value);
 
 			$css_toggled_pressed = <<<CSS
-			.${$class_name}.toggled.pressed {
-				${$css_color_property_name}: $toggled_pressed_value;
+			.{$class_name}.toggled.pressed {
+				{$css_color_property_name}: $toggled_pressed_value;
 			}
 			CSS;
 		}
@@ -449,26 +449,11 @@ abstract class Component
 		return $class_name;
 	}
 
-	final protected static function makeAttributes(
-		CommonProps $props,
-		/** @var string[]|null $classes */
-		?array $classes = null,
-	): string
+	final protected static function makeAttributes(): string
 	{
-		$id = $props->id ?? uniqid();
-		$class = $props->class ?? null;
-		$style = $props->style ?? null;
-
-		if($classes !== null) {
-			$component_classes = implode(' ', $classes);
-
-			if($class !== null) {
-				$class .= " $component_classes";
-			} else {
-				$class = $component_classes;
-
-			}
-		}
+		$id = $this->common_props[0]->id ?? uniqid();
+		$class = $this->common_props[0]->class ?? null;
+		$style = $this->common_props[0]->style ?? null;
 
 		$attributes = " id=\"$id\"";
 
@@ -488,7 +473,7 @@ abstract class Component
 	/** @param CommonProps|CommonProps[] $common_props */
 	final protected function registerCommonProps(CommonProps|array $common_props): void
 	{
-		$this->$common_props = $common_props;
+		$this->common_props = $common_props;
 
 		return;
 	}
@@ -501,10 +486,11 @@ abstract class Component
 	/** @var string[] $classes */
 	private array $classes = [];
 
+	/** @param string|callable $css */
 	final protected function addCss(
 		string $class_name,
-		string|null $props_id = null,
 		string|callable $css,
+		string|null $props_id = null,
 	): string
 	{
 		self::addClass(
