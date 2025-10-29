@@ -612,6 +612,8 @@ abstract class Component
 		array_push($classes, ...$typography_css->classes);
 		array_push($typos, ...$typography_css->fonts);
 
+		$this->addClasses(class_names: array_keys($typography_css->classes));
+
 		return;
 	}
 }
