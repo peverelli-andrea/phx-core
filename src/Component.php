@@ -468,7 +468,7 @@ abstract class Component
 	}
 
 	/** @var CommonProps|CommonProps[] $common_props */
-	private CommonProps|array $common_props = [];
+	protected CommonProps|array $common_props = [];
 
 	/** @param CommonProps|CommonProps[] $common_props */
 	final protected function registerCommonProps(CommonProps|array $common_props): void
@@ -484,7 +484,7 @@ abstract class Component
 	}
 
 	/** @var string[] $classes */
-	private array $classes = [];
+	protected array $classes = [];
 
 	/** @param string|callable $css */
 	final protected function addCss(
@@ -508,7 +508,7 @@ abstract class Component
 	}
 
 	/** @var string[] $scripts_before */
-	private array $scripts_before = [];
+	protected array $scripts_before = [];
 
 	final protected function addScriptBefore(
 		string $script_name,
@@ -541,7 +541,7 @@ abstract class Component
 	}
 
 	/** @var BackgroundColor|ForegroundColor[] $colors */
-	private array $colors = [];
+	protected array $colors = [];
 
 	final protected function addColor(
 		Palette|BackgroundColor|ForegroundColor|string $color,
@@ -581,7 +581,7 @@ abstract class Component
 	}
 
 	/** @var string[] $typos */
-	private array $typos = [];
+	protected array $typos = [];
 
 	final protected function addTypography(
 		TypographyRole $role,
