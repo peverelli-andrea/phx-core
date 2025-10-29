@@ -524,6 +524,8 @@ abstract class Component
 	{
 		return new Render(
 			html: $html,
+			colors: $this->colors,
+			typos: $this->typos,
 			classes: $this->classes,
 			scripts_before: $this->scripts_before,
 		);
@@ -536,5 +538,64 @@ abstract class Component
 		} else {
 			return $this->common_props[$props_id];
 		}
+	}
+
+	/** @var BackgroundColor|ForegroundColor[] $colors */
+	private array $colors = [];
+
+	final protected function addColor(
+		Palette|BackgroundColor|ForegroundColor|string $color,
+		CssColorProperty $css_color_property,
+		ColorType|null $color_type = null,
+	): void
+	{
+		if(gettype($color) !== "string" && $color_type) {
+			if($color_type === ColorType::FOREGROUND) {
+				$color = $color->getForegroundColor();
+			} else {
+				$color = $color->getBackgroundColor();
+			}
+		}
+
+		$color_name = self::getColorName(color: $color);
+		$color_value = self::getColorValue(color: $color);
+
+		if(gettype($color) !== "string") {
+			$this->colors[$color->value] = $color;
+		}
+
+		$css_color_property_name = $css_color_property->value;
+
+		$this->addCss(
+			class_name: "{$css_color_property_name}_$color_name",
+			css: function(string $class_name) use($css_color_property_name, $color_value): string {
+				return <<<CSS
+				.$class_name {
+					$css_color_property_name: $color_value;
+				}
+				CSS;
+			},
+		);
+
+		return;
+	}
+
+	/** @var string[] $typos */
+	private array $typos = [];
+
+	final protected function addTypography(
+		TypographyRole $role,
+		TypographySubRole $sub_role,
+	): void
+	{
+		$typography_css = self::getTypographyCss(
+			role: $role,
+			sub_role: $sub_role,
+		);
+
+		array_push($classes, ...$typography_css->classes);
+		array_push($typos, ...$typography_css->fonts);
+
+		return;
 	}
 }
