@@ -7,8 +7,24 @@ abstract class Page
 	/** @var Render[] $components */
 	protected array $components = [];
 
-	final protected function registerComponent(Render $render): string
+	/** @param mixed[] $props */
+	final protected function newComponent(
+		string $component,
+		array $props,
+	): string
 	{
+		$props_class = "{$component}Props";
+		$reflection = new \ReflectionClass($props_class);
+		$constructor = $reflection->getConstructor();
+
+		$params = [];
+		foreach ($constructor->getParameters() as $parameter) {
+			$name = $parameter->getName();
+			$params[] = $props[$name] ?? $parameter->getDefaultValue();
+		}
+
+		$render = (new $component())->render(props: $reflection->newInstanceArgs($params));
+
 		array_push($this->components, $render);
 
 		return $render->html;
