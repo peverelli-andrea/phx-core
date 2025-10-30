@@ -7,12 +7,9 @@ abstract class Page
 	/** @var Render[] $components */
 	protected array $components = [];
 
-	final protected function registerComponent(
-		string $id,
-		Render $render,
-	): string
+	final protected function registerComponent(Render $render): string
 	{
-		$this->components[$id] = $render;
+		array_push($this->components, $render);
 
 		return $render->html;
 	}
