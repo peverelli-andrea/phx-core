@@ -285,11 +285,11 @@ abstract class Component
 		return $color_name;
 	}
 
-	final protected static function getColorStatesCss(
+	final protected function getColorStatesCss(
 		ColorStates $color_states,
 		CssColorProperty $css_color_property,
 		string $class_name,
-	): ColorStatesCss
+	): string
 	{
 		$css_color_property_name = $css_color_property->value;
 
@@ -303,116 +303,115 @@ abstract class Component
 		$toggled_focus = $color_states->toggled_focus;
 		$toggled_pressed = $color_states->toggled_pressed;
 
-		$css_default = null;
-		if($default !== null) {
-			$default_value = self::getColorValue(color: $default_value);
+		$color_states_css = "";
 
-			$css_default = <<<CSS
+		if($default !== null) {
+			$this->colors[$default->value] = $default;
+
+			$default_value = self::getColorValue(color: $default);
+
+			$color_states_css .= <<<CSS
 			.$class_name{
 				{$css_color_property_name}: $default_value;
 			}
 			CSS;
 		}
 
-		$css_disabled = null;
 		if($disabled !== null) {
-			$disabled_value = self::getColorValue(color: $disabled_value);
+			$this->colors[$disabled->value] = $disabled;
 
-			$css_disabled = <<<CSS
+			$disabled_value = self::getColorValue(color: $disabled);
+
+			$color_states_css  .= <<<CSS
 			.{$class_name}:disabled {
 				{$css_color_property_name}: $disabled_value;
 			}
 			CSS;
 		}
 
-		$css_hover = null;
 		if($hover !== null) {
-			$hover_value = self::getColorValue(color: $hover_value);
+			$this->colors[$hover->value] = $hover;
 
-			$css_hover = <<<CSS
+			$hover_value = self::getColorValue(color: $hover);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}:hover {
 				{$css_color_property_name}: $hover_value;
 			}
 			CSS;
 		}
 
-		$css_focus = null;
 		if($focus !== null) {
-			$focus_value = self::getColorValue(color: $focus_value);
+			$this->colors[$focus->value] = $focus;
 
-			$css_focus = <<<CSS
+			$focus_value = self::getColorValue(color: $focus);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}:focus-within {
 				{$css_color_property_name}: $focus_value;
 			}
 			CSS;
 		}
 
-		$css_pressed = null;
 		if($pressed !== null) {
-			$pressed_value = self::getColorValue(color: $pressed_value);
+			$this->colors[$pressed->value] = $pressed;
 
-			$css_pressed = <<<CSS
+			$pressed_value = self::getColorValue(color: $pressed);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}.pressed {
 				{$css_color_property_name}: $pressed_value;
 			}
 			CSS;
 		}
 
-		$css_toggled_default = null;
 		if($toggled_default !== null) {
-			$toggled_default_value = self::getColorValue(color: $toggled_default_value);
+			$this->colors[$toggled_default->value] = $toggled_default;
 
-			$css_toggled_default = <<<CSS
+			$toggled_default_value = self::getColorValue(color: $toggled_default);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}.toggled {
 				{$css_color_property_name}: $toggled_default_value;
 			}
 			CSS;
 		}
 
-		$css_toggled_hover = null;
 		if($toggled_hover !== null) {
-			$toggled_hover_value = self::getColorValue(color: $toggled_hover_value);
+			$this->colors[$toggled_hover->value] = $toggled_hover;
 
-			$css_toggled_hover = <<<CSS
+			$toggled_hover_value = self::getColorValue(color: $toggled_hover);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}.toggled:hover {
 				{$css_color_property_name}: $toggled_hover_value;
 			}
 			CSS;
 		}
 
-		$css_toggled_focus = null;
 		if($toggled_focus !== null) {
-			$toggled_focus_value = self::getColorValue(color: $toggled_focus_value);
+			$this->colors[$toggled_focus->value] = $toggled_focus;
 
-			$css_toggled_focus = <<<CSS
+			$toggled_focus_value = self::getColorValue(color: $toggled_focus);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}.toggled:focus-within {
 				{$css_color_property_name}: $toggled_focus_value;
 			}
 			CSS;
 		}
 
-		$css_toggled_pressed = null;
 		if($toggled_pressed !== null) {
-			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed_value);
+			$this->colors[$toggled_pressed->value] = $toggled_pressed;
 
-			$css_toggled_pressed = <<<CSS
+			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed);
+
+			$color_states_css .= <<<CSS
 			.{$class_name}.toggled.pressed {
 				{$css_color_property_name}: $toggled_pressed_value;
 			}
 			CSS;
 		}
-
-		$color_states_css = new ColorStatesCss(
-			default: $css_default,
-			disabled: $css_disabled,
-			hover: $css_hover,
-			focus: $css_focus,
-			pressed: $css_pressed,
-			toggled_default: $css_toggled_default,
-			toggled_hover: $css_toggled_hover,
-			toggled_focus: $css_toggled_focus,
-			toggled_pressed: $css_toggled_pressed,
-		);
 
 		return $color_states_css;
 	}
@@ -540,6 +539,19 @@ abstract class Component
 		return $script_name;
 	}
 
+	/** @var string[] $scripts_after */
+	protected array $scripts_after = [];
+
+	final protected function addScriptAfter(
+		string $script_name,
+		string $script,
+	): string
+	{
+		$this->scripts_after[$script_name] = $script;
+
+		return $script_name;
+	}
+
 	final protected function makeRender(string $html = ""): Render
 	{
 		return new Render(
@@ -548,6 +560,7 @@ abstract class Component
 			typos: $this->typos,
 			classes: $this->classes,
 			scripts_before: $this->scripts_before,
+			scripts_after: $this->scripts_after,
 		);
 	}
 
@@ -620,4 +633,33 @@ abstract class Component
 
 		return;
 	}
+
+	/** @param mixed[] $props */
+	final protected function newComponent(
+		string $component,
+		array $props,
+	): string
+	{
+		$props_class = "{$component}Props";
+		$reflection = new \ReflectionClass($props_class);
+		$constructor = $reflection->getConstructor();
+
+		$params = [];
+		foreach ($constructor->getParameters() as $parameter) {
+			$name = $parameter->getName();
+			$params[] = $props[$name] ?? $parameter->getDefaultValue();
+		}
+
+		$render = (new $component())->render(props: $reflection->newInstanceArgs($params));
+
+		$this->classes = array_merge($this->classes, $render->classes);
+		$this->colors = array_merge($this->colors, $render->colors);
+		$this->typos = array_merge($this->typos, $render->typos);
+		$this->scripts_before = array_merge($this->scripts_before, $render->scripts_before);
+		$this->scripts_after = array_merge($this->scripts_after, $render->scripts_after);
+
+
+		return $render->html;
+	}
+
 }
