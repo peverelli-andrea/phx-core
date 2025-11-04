@@ -183,7 +183,7 @@ final class Bundler
 	}
 
 	/** @return object[] */
-	private static function readPaletteConfig(): array
+	final public static function readPaletteConfig(): array
 	{
 		$settings_path = realpath($_SERVER["DOCUMENT_ROOT"] . "/../settings/palette/");
 
@@ -215,7 +215,7 @@ final class Bundler
 	}
 
 	/** @param object[] $palette_config */
-	private static function getPaletteSet(
+	final public static function getPaletteSet(
 		ForegroundColor|BackgroundColor $color,
 		array $palette_config,
 	): PaletteSet

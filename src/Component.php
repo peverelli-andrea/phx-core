@@ -288,7 +288,11 @@ abstract class Component
 	final protected function getColorStatesCss(
 		ColorStates $color_states,
 		CssColorProperty $css_color_property,
-		string $class_name,
+		string $main_class_name,
+		string $component_class_name = "",
+		BackgroundColor|ForegroundColor|null $state_color = null,
+		BackgroundColor|ForegroundColor|null $toggled_state_color = null,
+		bool $generate_default = true,
 	): string
 	{
 		$css_color_property_name = $css_color_property->value;
@@ -303,18 +307,44 @@ abstract class Component
 		$toggled_focus = $color_states->toggled_focus;
 		$toggled_pressed = $color_states->toggled_pressed;
 
+		$palette_config = Bundler::readPaletteConfig();
+
+		if($state_color) {
+			$state_color_palette_set = Bundler::getPaletteSet(
+				color: $state_color,
+				palette_config: $palette_config,
+			);
+		}
+
+		if($toggled_state_color) {
+			$toggled_state_color_palette_set = Bundler::getPaletteSet(
+				color: $toggled_state_color,
+				palette_config: $palette_config,
+			);
+		}
+
 		$color_states_css = "";
 
+		if($component_class_name !== "") {
+			$component_class_name = " .$component_class_name";
+		}
+
 		if($default !== null) {
+			$default_palette_set = Bundler::getPaletteSet(
+				color: $default,
+				palette_config: $palette_config,
+			);
 			$this->colors[$default->value] = $default;
 
 			$default_value = self::getColorValue(color: $default);
 
-			$color_states_css .= <<<CSS
-			.$class_name{
-				{$css_color_property_name}: $default_value;
+			if($generate_default) {
+				$color_states_css .= <<<CSS
+				.$main_class_name$component_class_name {
+					{$css_color_property_name}: $default_value;
+				}
+				CSS;
 			}
-			CSS;
 		}
 
 		if($disabled !== null) {
@@ -323,97 +353,275 @@ abstract class Component
 			$disabled_value = self::getColorValue(color: $disabled);
 
 			$color_states_css  .= <<<CSS
-			.{$class_name}:disabled {
+			.{$main_class_name}:disabled$component_class_name {
 				{$css_color_property_name}: $disabled_value;
 			}
 			CSS;
 		}
 
 		if($hover !== null) {
-			$this->colors[$hover->value] = $hover;
+			if($hover !== true) {
+				$this->colors[$hover->value] = $hover;
 
-			$hover_value = self::getColorValue(color: $hover);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}:hover {
-				{$css_color_property_name}: $hover_value;
+				$hover_value = self::getColorValue(color: $hover);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}:hover$component_class_name";
+			if($hover === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $default_palette_set,
+						foreground: $state_color_palette_set,
+						alpha: 0.08,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $hover_value;
+				}
+				CSS;
+			}
 		}
 
 		if($focus !== null) {
-			$this->colors[$focus->value] = $focus;
+			if($focus !== true) {
+				$this->colors[$focus->value] = $focus;
 
-			$focus_value = self::getColorValue(color: $focus);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}:focus-within {
-				{$css_color_property_name}: $focus_value;
+				$focus_value = self::getColorValue(color: $focus);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}:focus-within$component_class_name";
+			if($focus === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $default_palette_set,
+						foreground: $state_color_palette_set,
+						alpha: 0.1,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $focus_value;
+				}
+				CSS;
+			}
 		}
 
 		if($pressed !== null) {
-			$this->colors[$pressed->value] = $pressed;
+			if($pressed !== true){
+				$this->colors[$pressed->value] = $pressed;
 
-			$pressed_value = self::getColorValue(color: $pressed);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}.pressed {
-				{$css_color_property_name}: $pressed_value;
+				$pressed_value = self::getColorValue(color: $pressed);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}.pressed$component_class_name";
+			if($pressed === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $default_palette_set,
+						foreground: $state_color_palette_set,
+						alpha: 0.1,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $pressed_value;
+				}
+				CSS;
+			}
 		}
 
 		if($toggled_default !== null) {
+			$toggled_default_palette_set = Bundler::getPaletteSet(
+				color: $toggled_default,
+				palette_config: $palette_config,
+			);
+
 			$this->colors[$toggled_default->value] = $toggled_default;
 
 			$toggled_default_value = self::getColorValue(color: $toggled_default);
 
 			$color_states_css .= <<<CSS
-			.{$class_name}.toggled {
+			.{$main_class_name}.toggled$component_class_name {
 				{$css_color_property_name}: $toggled_default_value;
 			}
 			CSS;
 		}
 
 		if($toggled_hover !== null) {
-			$this->colors[$toggled_hover->value] = $toggled_hover;
+			if($toggled_hover !== true) {
+				$this->colors[$toggled_hover->value] = $toggled_hover;
 
-			$toggled_hover_value = self::getColorValue(color: $toggled_hover);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}.toggled:hover {
-				{$css_color_property_name}: $toggled_hover_value;
+				$toggled_hover_value = self::getColorValue(color: $toggled_hover);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}.toggled:hover$component_class_name";
+			if($toggled_hover === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $toggled_default_palette_set,
+						foreground: $toggled_state_color_palette_set,
+						alpha: 0.08,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $toggled_hover_value;
+				}
+				CSS;
+			}
 		}
 
 		if($toggled_focus !== null) {
-			$this->colors[$toggled_focus->value] = $toggled_focus;
+			if($toggled_focus !== true) {
+				$this->colors[$toggled_focus->value] = $toggled_focus;
 
-			$toggled_focus_value = self::getColorValue(color: $toggled_focus);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}.toggled:focus-within {
-				{$css_color_property_name}: $toggled_focus_value;
+				$toggled_focus_value = self::getColorValue(color: $toggled_focus);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}.toggled:focus-within$component_class_name";
+			if($toggled_focus === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $toggled_default_palette_set,
+						foreground: $toggled_state_color_palette_set,
+						alpha: 0.1,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $toggled_focus_value;
+				}
+				CSS;
+			}
 		}
 
 		if($toggled_pressed !== null) {
-			$this->colors[$toggled_pressed->value] = $toggled_pressed;
+			if($toggled_pressed !== true) {
+				$this->colors[$toggled_pressed->value] = $toggled_pressed;
 
-			$toggled_pressed_value = self::getColorValue(color: $toggled_pressed);
-
-			$color_states_css .= <<<CSS
-			.{$class_name}.toggled.pressed {
-				{$css_color_property_name}: $toggled_pressed_value;
+				$toggled_pressed_value = self::getColorValue(color: $toggled_pressed);
 			}
-			CSS;
+
+			$media_query = ".{$main_class_name}.toggled.pressed$component_class_name";
+			if($toggled_pressed === true) {
+				$color_states_css .= self::getResponsiveColorCss(
+					palette_set: self::sumPaletteSet(
+						background: $toggled_default_palette_set,
+						foreground: $toggled_state_color_palette_set,
+						alpha: 0.1,
+					),
+					media_query: $media_query,
+					css_color_property: $css_color_property,
+				);
+			} else {
+				$color_states_css .= <<<CSS
+				$media_query {
+					{$css_color_property->value}: $toggled_pressed_value;
+				}
+				CSS;
+			}
 		}
 
 		return $color_states_css;
+	}
+
+	private static function getResponsiveColorCss(
+		PaletteSet $palette_set,
+		string $media_query,
+		CssColorProperty $css_color_property,
+	): string
+	{
+		return <<<CSS
+		$media_query {
+			{$css_color_property->value}: {$palette_set->light_normal};
+		}
+		
+		@media (prefers-contrast: less) {
+			$media_query {
+				{$css_color_property->value}: {$palette_set->light_medium};
+			}
+		}
+
+		@media (prefers-contrast: more) {
+			$media_query {
+				{$css_color_property->value}: {$palette_set->light_high};
+			}
+		}
+
+		@media (prefers-color-scheme: dark) {
+			$media_query {
+				{$css_color_property->value}: {$palette_set->dark_normal};
+			}
+
+			@media (prefers-contrast: less) {
+				$media_query {
+					{$css_color_property->value}: {$palette_set->dark_medium};
+				}
+			}
+
+			@media (prefers-contrast: more) {
+				$media_query {
+					{$css_color_property->value}: {$palette_set->dark_high};
+				}
+			}
+		}
+		CSS;
+	}
+
+	private static function sumPaletteSet(
+		PaletteSet $background,
+		PaletteSet $foreground,
+		float $alpha,
+	): PaletteSet
+	{
+		return new PaletteSet(
+			light_normal: self::sumColors(
+				background: $background->light_normal,
+				foreground: $foreground->light_normal,
+				alpha: $alpha,
+			),
+			light_medium: self::sumColors(
+				background: $background->light_medium,
+				foreground: $foreground->light_medium,
+				alpha: $alpha,
+			),
+			light_high: self::sumColors(
+				background: $background->light_high,
+				foreground: $foreground->light_high,
+				alpha: $alpha,
+			),
+			dark_normal: self::sumColors(
+				background: $background->dark_normal,
+				foreground: $foreground->dark_normal,
+				alpha: $alpha,
+			),
+			dark_medium: self::sumColors(
+				background: $background->dark_medium,
+				foreground: $foreground->dark_medium,
+				alpha: $alpha,
+			),
+			dark_high: self::sumColors(
+				background: $background->dark_high,
+				foreground: $foreground->dark_high,
+				alpha: $alpha,
+			),
+		);
 	}
 
 	// When a unique ID is needed at a certain point; if already setted get it, if not set it and get it
@@ -658,8 +866,53 @@ abstract class Component
 		$this->scripts_before = array_merge($this->scripts_before, $render->scripts_before);
 		$this->scripts_after = array_merge($this->scripts_after, $render->scripts_after);
 
-
 		return $render->html;
 	}
 
+	private static function sumColors(
+		string $background,
+		string $foreground,
+		float $alpha,
+	): string
+	{
+		// Hex → RGB (0–255)
+		$parseHex = function (string $hex): array {
+			$hex = ltrim($hex, '#');
+
+			return [
+				hexdec(substr($hex, 0, 2)),
+				hexdec(substr($hex, 2, 2)),
+				hexdec(substr($hex, 4, 2)),
+			];
+		};
+
+		$background = $parseHex($background);
+		$foreground = $parseHex($foreground);
+
+		// sRGB → linear-light (IEC 61966-2-1)
+		$toLinear = static function (float $value): float {
+			$value /= 255.0;
+
+			return $value <= 0.04045 ? $value / 12.92 : pow(($value + 0.055) / 1.055, 2.4);
+		};
+
+		// linear-light → sRGB
+		$toSrgb = static function (float $value): float {
+			return $value <= 0.0031308 ? $value * 12.92 : 1.055 * pow($value, 1 / 2.4) - 0.055;
+		};
+
+		// Blend per channel in *linear space*
+		$out = [];
+		for ($i = 0; $i < 3; $i++) {
+			$linear_background = $toLinear($background[$i]);
+			$linear_foreground = $toLinear($foreground[$i]);
+			$linear_sum = $linear_foreground * $alpha + $linear_background * (1 - $alpha);
+
+			// Convert back to sRGB and clamp
+			$srgb = max(0.0, min(1.0, $toSrgb($linear_sum)));
+			$out[$i] = round($srgb * 255);
+		}
+
+		return sprintf("#%02X%02X%02X", $out[0], $out[1], $out[2]);
+	}
 }
