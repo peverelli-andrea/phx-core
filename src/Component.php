@@ -915,4 +915,25 @@ abstract class Component
 
 		return sprintf("#%02X%02X%02X", $out[0], $out[1], $out[2]);
 	}
+
+	final protected static function makeSquareCornersCss(int $size): string
+	{
+		$clip_path_value = <<<CSS
+		polygon(
+			0px {$size}px,
+			{$size}px 0px,
+			calc(100% - {$size}px) 0px,
+			100% {$size}px,
+			100% calc(100% - {$size}px),
+			calc(100% - {$size}px) 100%,
+			{$size}px 100%,
+			0px calc(100% - {$size}px)
+		);
+		CSS;
+
+		return <<<CSS
+		clip-path: $clip_path_value;
+		-webkit-clip-path: $clip_path_value;
+		CSS;
+	}
 }
