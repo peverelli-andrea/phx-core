@@ -936,4 +936,64 @@ abstract class Component
 		-webkit-clip-path: $clip_path_value;
 		CSS;
 	}
+
+	final protected function getShadowCss(
+		string $class_name,
+		ShadowLevel $shadow_level,
+	): string
+	{
+		// From https://github.com/material-components/material-web/blob/main/elevation/internal/_elevation.scss
+		// clamp() in PHP is max($min_value, min($value, max_value))
+
+		// Key light
+
+		$key_light_y_l1 = max(0, min(intval($shadow_level->value), 1));
+		$key_light_y_l4 = max(0, min(intval($shadow_level->value)-3, 1));
+		$key_light_y_l5 = 2*max(0, min(intval($shadow_level->value)-4, 1));
+
+		$key_light_y_value = $key_light_y_l1 + $key_light_y_l4 + $key_light_y_l5;
+		$key_light_y = "{$key_light_y_value}px";
+
+		$key_light_blur_l1 = 2*max(0, min(intval($shadow_level->value), 1));
+		$key_light_blur_l3 = max(0, min(intval($shadow_level->value)-2, 1));
+		$key_light_blur_l5 = max(0, min(intval($shadow_level->value)-4, 1));
+
+		$key_light_blur_value = $key_light_blur_l1 + $key_light_blur_l3 + $key_light_blur_l5;
+		$key_light_blur = "{$key_light_blur_value}px";
+
+		// Ambient light
+
+		$ambient_light_y_l1 = max(0, min(intval($shadow_level->value), 1));
+		$ambient_light_y_l2 = max(0, min(intval($shadow_level->value)-1, 1));
+		$ambient_light_y_l3to5 = 2*max(0, min(intval($shadow_level->value)-2, 3));
+
+		$ambient_light_y_value = $ambient_light_y_l1 + $ambient_light_y_l2 + $ambient_light_y_l3to5;
+		$ambient_light_y = "{$ambient_light_y_value}px";
+
+		$ambient_light_blur_l1to2 = 3*max(0, min(intval($shadow_level->value), 2));
+		$ambient_light_blur_l3to5 = 2*max(0, min(intval($shadow_level->value)-2, 3));
+
+		$ambient_light_blur_value = $ambient_light_blur_l1to2 + $ambient_light_blur_l3to5;
+		$ambient_light_blur = "{$ambient_light_blur_value}px";
+
+		$ambient_light_spread_l1to4 = max(0, min(intval($shadow_level->value), 4));
+		$ambient_light_spread_l5 = 2*max(0, min(intval($shadow_level->value)-4, 1));
+
+		$ambient_light_spread_value = $ambient_light_spread_l1to4 + $ambient_light_spread_l5;
+		$ambient_light_spread = "{$ambient_light_spread_value}px";
+
+		// CSS
+
+		$this->colors[BackgroundColor::KEY_SHADOW->value] = BackgroundColor::KEY_SHADOW;
+		$key_shadow_color_value = self::getColorValue(BackgroundColor::KEY_SHADOW);
+		$this->colors[BackgroundColor::AMBIENT_SHADOW->value] = BackgroundColor::AMBIENT_SHADOW;
+		$ambient_shadow_color_value = self::getColorValue(BackgroundColor::AMBIENT_SHADOW);
+
+		return <<<CSS
+		.{$class_name} {
+			box-shadow: 0px $key_light_y $key_light_blur 0px $key_shadow_color_value,
+				0px $ambient_light_y $ambient_light_blur $ambient_light_spread $ambient_shadow_color_value;
+		}
+		CSS;
+	}
 }
