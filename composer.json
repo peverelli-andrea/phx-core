@@ -1,0 +1,17 @@
+{
+    "name": "andreapeverelli/phx-core",
+    "description": "A frontend UI framework for PHP",
+    "type": "framework",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Andreapeverelli\\PhxCore\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrea Peverelli"
+        }
+    ],
+    "require": {}
+}
