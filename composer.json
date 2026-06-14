@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Andreapeverelli\\PhxCore\\": "src/"
+            "AndreaPeverelli\\PhxCore\\": "src/"
         }
     },
     "authors": [
