@@ -22,6 +22,7 @@ final class TestComponent extends Component {
 		$this->registerComponent(props: new TestComponentProps(common_props: new CommonProps(
 			id: $id,
 			classes: ["class1", "class2"],
+			css: ["css1", "css2"],
 			attributes: ["attribute1" => "test1", "attribute2" => "test2"],
 		)));
 
@@ -29,16 +30,19 @@ final class TestComponent extends Component {
 			"props" => ["default" => new TestComponentProps(common_props: new CommonProps(
 				id: $id,
 				classes: ["class1", "class2"],
+				css: ["css1", "css2"],
 				attributes: ["attribute1" => "test1", "attribute2" => "test2"],
 			))],
 			"attributes" => ["default" => ""],
 			"classes" => ["default" => ["class1", "class2"]],
+			"css" => ["default" => ["css1", "css2"]],
 		];
 
 		$got = [
 			"props" => $this->props,
 			"attributes" => $this->attributes,
 			"classes" => $this->classes,
+			"css" => $this->css,
 		];
 
 		TestSuite::test(

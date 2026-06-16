@@ -7,12 +7,16 @@ abstract class Component
 	protected array $props = [];
 	protected array $attributes = [];
 	protected array $classes = [];
+	protected array $css = [];
 
 	final protected function registerComponent(mixed $props, string $component_id = "default")
 	{
 		$this->props[$component_id] = $props;
 		$this->attributes[$component_id] = "";
 		$this->classes[$component_id] = $props->common_props->classes;
+		$this->fonts[$component_id] = [];
+		$this->colors[$component_id] = [];
+		$this->css[$component_id] = $props->common_props->css;
 	}
 
 	final protected function makeAttributes(string $component_id = "default"): void
