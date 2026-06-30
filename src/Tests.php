@@ -6,6 +6,7 @@ require_once("../vendor/autoload.php");
 
 use AndreaPeverelli\PhxCore\typo\TypoRole;
 use AndreaPeverelli\PhxCore\typo\TypoSubRole;
+use AndreaPeverelli\PhxCore\palette\ColorScheme;
 
 echo "#######################\n";
 echo "# PHX-CORE UNIT TESTS #\n";
@@ -101,6 +102,51 @@ final class TestComponent extends Component {
 
 		TestSuite::test(
 			test_name: "useFont",
+			got: $got,
+			expect: $expect,
+		);
+
+		$this->classes["default"] = [];
+		$this->css["default"] = [];
+
+		$this->useColor(color: ColorScheme::PRIMARY, mode: ColorMode::COLOR);
+
+		$expect = [
+			"classes" => ["phx_primary_color"],
+			"css" => [
+				<<<CSS
+				.phx_primary_color {
+					color: #6750A4;
+				}
+
+				@media (prefers-contrast: more) {
+					.phx_primary_color {
+						color: #381E72;
+					}
+				}
+
+				@media (prefers-color-scheme: dark) {
+					.phx_primary_color {
+						color: #D0BCFF;
+					}
+				}
+
+				@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+					.phx_primary_color {
+						color: #F6EDFF;
+					}
+				}
+				CSS,
+			],
+		];
+
+		$got = [
+			"classes" => $this->classes["default"],
+			"css" => $this->css["default"],
+		];
+
+		TestSuite::test(
+			test_name: "useColor",
 			got: $got,
 			expect: $expect,
 		);

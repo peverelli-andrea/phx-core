@@ -11,11 +11,10 @@ final class Colors
 	final public static function getSettings(): array
 	{
 		return [
-			"dark" => [
-				"default" => [
-					Palette::PRIMARY_100->value => "#FFFFFF",
-				],
-			],
+			Palette::PRIMARY_20->value => "#381E72",
+			Palette::PRIMARY_40->value => "#6750A4",
+			Palette::PRIMARY_80->value => "#D0BCFF",
+			Palette::PRIMARY_95->value => "#F6EDFF",
 		];
 	}
 }

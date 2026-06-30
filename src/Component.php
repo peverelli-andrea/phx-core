@@ -3,9 +3,12 @@
 namespace AndreaPeverelli\PhxCore;
 
 use AndreaPeverelli\PhxCore\Settings;
+use AndreaPeverelli\PhxCore\palette\ColorScheme;
 
 abstract class Component
 {
+	private array $settings = [];
+
 	protected array $props = [];
 	protected array $attributes = [];
 	protected array $classes = [];
@@ -48,6 +51,13 @@ abstract class Component
 		}
 	}
 
+	private function loadSettings(): void
+	{
+		if($this->settings === []) {
+			$this->settings = Settings::getSettings();
+		}
+	}
+
 	final protected function useFont(Typo $typo, string $component_id = "default"): void
 	{
 		$monospace = $typo->monospace ? "monospace" : "proportional";
@@ -55,7 +65,8 @@ abstract class Component
 
 		$class_name = "phx_{$monospace}_{$emphasized}_{$typo->role->value}_{$typo->sub_role->value}";
 
-		$settings = Settings::getSettings()["typos"][$monospace][$emphasized][$typo->role->value][$typo->sub_role->value];
+		$this->loadSettings();
+		$settings = $this->settings["typos"][$monospace][$emphasized][$typo->role->value][$typo->sub_role->value];
 
 		array_push($this->classes[$component_id], $class_name);
 
@@ -80,6 +91,44 @@ abstract class Component
 			line-height: {$settings["line-height"]};
 			font-size: {$settings["font-size"]};
 			letter-spacing: {$settings["letter-spacing"]};
+		}
+		CSS);
+	}
+
+	final protected function useColor(
+		ColorScheme $color,
+		ColorMode $mode,
+		string $component_id = "default",
+	): void
+	{
+		$class_name = "phx_{$color->value}_{$mode->value}";
+
+		array_push($this->classes[$component_id], $class_name);
+
+		$this->loadSettings();
+		$settings = $this->settings["colors"];
+
+		array_push($this->css[$component_id], <<<CSS
+		.{$class_name} {
+			{$mode->getCssPropertyName()}: {$settings[$color->getColor(theme: "light", contrast: "default")->value]};
+		}
+
+		@media (prefers-contrast: more) {
+			.{$class_name} {
+				{$mode->getCssPropertyName()}: {$settings[$color->getColor(theme: "light", contrast: "high")->value]};
+			}
+		}
+
+		@media (prefers-color-scheme: dark) {
+			.{$class_name} {
+				{$mode->getCssPropertyName()}: {$settings[$color->getColor(theme: "dark", contrast: "default")->value]};
+			}
+		}
+
+		@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+			.{$class_name} {
+				{$mode->getCssPropertyName()}: {$settings[$color->getColor(theme: "dark", contrast: "high")->value]};
+			}
 		}
 		CSS);
 	}
